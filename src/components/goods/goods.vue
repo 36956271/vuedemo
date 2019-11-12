@@ -126,7 +126,9 @@
             }
           })
         })
-        return foods
+        return [
+          {price: 5, count: 5}
+        ]
       }
     },
     components: {
