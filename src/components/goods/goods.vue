@@ -33,6 +33,10 @@
                   <del v-show="food.oldPrice" class="old">￥{{food.oldPrice}}</del>
                 </div>
               </div>
+              <!--cart-controller-->
+              <div class="cart-controller-wrapper">
+                <CartControl :food="food"></CartControl>
+              </div>
             </li>
           </ul>
         </li>
@@ -47,6 +51,7 @@
 <script>
   import BScroll from 'better-scroll'
   import shopCart from '../../components/shopcart/shopcart'
+  import CartControl from '../cartcontroller/CartControl'
 
   export default {
     name: 'goods',
@@ -126,13 +131,12 @@
             }
           })
         })
-        return [
-          {price: 5, count: 5}
-        ]
+        return foods
       }
     },
     components: {
-      shopCart
+      shopCart,
+      CartControl
     }
   }
 </script>
@@ -275,4 +279,8 @@
               text-decoration: line-through
               font-size: 10px
               color: rgb(147, 153, 159)
+        .cart-controller-wrapper
+          position absolute
+          right 0px
+          bottom 5px
 </style>
