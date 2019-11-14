@@ -35,14 +35,14 @@
               </div>
               <!--cart-controller-->
               <div class="cart-controller-wrapper">
-                <CartControl :food="food"></CartControl>
+                <CartControl :food="food" v-on:cart-add="cartAdd"></CartControl>
               </div>
             </li>
           </ul>
         </li>
       </ul>
     </div>
-    <shopCart :select-foods="selectFoods"
+    <shopCart ref="shopcart" :select-foods="selectFoods"
               :delivery-price="seller.deliveryPrice"
               :min-price="seller.minPrice"></shopCart>
   </div>
@@ -107,6 +107,13 @@
         let foodList = this.$refs.foodWrapper.getElementsByClassName('good-list-hook')
         let el = foodList[index]
         this.foodScroll.scrollToElement(el, 300)
+      },
+      cartAdd (el) {
+        // 优化动画效果
+        this.$nextTick(() => {
+          /*调用shopcart主件中的drop函数*/
+          this.$refs['shopcart'].drop(el)
+        })
       }
     },
     computed: {
@@ -279,6 +286,7 @@
               text-decoration: line-through
               font-size: 10px
               color: rgb(147, 153, 159)
+
         .cart-controller-wrapper
           position absolute
           right 0px

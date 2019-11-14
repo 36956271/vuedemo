@@ -14,6 +14,16 @@
       <div class="content-right">
         <div class="pay" :class="payClass">{{payPrice}}</div>
       </div>
+      <div class="ball-container">
+        <transition-group name="drop" tag="div"
+                          v-on:before-enter="beforeEnter"
+                          v-on:enter="dropEnter"
+                          v-on:after-enter="afterEnter">
+          <div class="ball" v-for="ball in balls" :key="ball.key" v-show="ball.show">
+            <div class="inner inner-hook"></div>
+          </div>
+        </transition-group>
+      </div>
     </div>
   </div>
 </template>
@@ -30,6 +40,18 @@
       },
       deliveryPrice: {type: Number, default: 0},
       minPrice: {type: Number, default: 0}
+    },
+    data () {
+      return {
+        balls: [
+          {show: false, key: 1},
+          {show: false, key: 2},
+          {show: false, key: 3},
+          {show: false, key: 4},
+          {show: false, key: 5}
+        ],
+        dropBalls: []
+      }
     },
     computed: {
       totalCount () {
@@ -62,6 +84,56 @@
         } else {
           return 'enough'
         }
+      }
+    },
+    methods: {
+      drop (el) {
+        /*获取balls中的小球，如果show=false则执行该小球的动画，同时将小球加入已经执行动画的小球集合中*/
+        for (let i = 0; i < this.balls.length; i++) {
+          let ball = this.balls[i]
+          if (!ball.show) {
+            ball.show = true
+            ball.el = el //绑定点击对象,为了获取点击对象的坐标作为小球动画的起始坐标
+            this.dropBalls.push(ball)
+            return
+          }
+        }
+      },
+      beforeEnter (el, done) {
+        let count = this.balls.length
+        while (count--) {
+          let ball = this.balls[count]
+          if (ball.show) {
+            let rect = ball.el.getBoundingClientRect()
+            let x = rect.left - 30
+            let y = -(window.innerHeight - rect.top - 21)
+            el.style.display = ''
+            el.style.transform = `translate3d(0,${y}px,0)`
+            el.style.webkitTransform = `translate3d(0,${y}px,0)`
+            let inner = el.getElementsByClassName('inner-hook')[0]
+            inner.style.webkitTransform = `translate3d(${x}px,0,0)`
+            inner.style.transform = `translate3d(${x}px,0,0)`
+          }
+        }
+      },
+      dropEnter (el, done) {
+        /* eslint-disable no-unused-vars */
+        /* 触发浏览器重绘; */
+        let rf = el.offsetHeight
+        this.$nextTick(() => {
+          el.style.webkitTransform = 'translate3d(0, 0, 0)'
+          el.style.transform = 'translate3d(0, 0, 0)'
+          let inner = el.getElementsByClassName('inner-hook')[0]
+          inner.style.webkitTransform = 'translate3d(0, 0, 0)'
+          inner.style.transform = 'translate3d(0, 0, 0)'
+          el.addEventListener('transitionend', done)
+        })
+      },
+      afterEnter (el) {
+        el.style.display = 'none'
+        let ball = this.dropBalls.shift()
+        ball.show = false
+        ball.el = null
       }
     }
   }
@@ -171,4 +243,21 @@
           &.enough
             background-color: #00b43c
             color: #fff
+
+      .ball-container
+        .ball
+          position fixed
+          left 30px
+          bottom 21px
+          z-index 200
+
+          &.drop-enter-active
+            transition all .4s cubic-bezier(0.49, -0.29, 0.75, 0.41)
+
+          .inner
+            width 16px
+            height 16px
+            border-radius 50%
+            background-color rgb(0, 160, 220)
+            transition all .4s linear
 </style>

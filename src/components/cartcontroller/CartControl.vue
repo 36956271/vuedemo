@@ -36,6 +36,8 @@
         } else {
           this.food.count++
         }
+        /*提交事件给父主键,将点击的对象传递到父主键*/
+        this.$emit('cart-add', e.target)
       },
       decreaseFood () {
         this.food.count--
@@ -52,8 +54,10 @@
       vertical-align top
       display inline-block
       padding 6px
+
       &.fade-enter-active, &.fade-leave-active
         transition all .4s linear
+
       &.fade-enter, &.fade-leave-to
         opacity 0
         transform translate3d(24px, 0, 0)
@@ -64,8 +68,10 @@
         color rgb(0, 160, 220)
         line-height 24px
         height 24px
+
         &.rotate-enter-active, &.rotate-leave-active
           transition: all .4s ease
+
         &.rotate-enter, &.rotate-leave-active
           opacity: 0
           transform: rotate(720deg)
@@ -78,9 +84,11 @@
       line-height 24px
       width 24px
       padding 6px 0
-      &.display-count-enter-active,&.display-count-leave-active
+
+      &.display-count-enter-active, &.display-count-leave-active
         transition all .4s linear
-      &.display-count-enter,&.display-count-leave-to
+
+      &.display-count-enter, &.display-count-leave-to
         opacity: 0
 
     .increase
